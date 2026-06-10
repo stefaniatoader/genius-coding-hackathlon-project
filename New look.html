@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BeatTheHeat</title>
+
+  <script src="https://unpkg.com/globe.gl"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      line-height: 1.7;
+      color: #f0e0d0;
+      background: #1a0f0a;
+    }
+
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 620px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .hero-img {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1504370805625-d32c54b16100?auto=format&fit=crop&w=1920&q=90');
+      background-size: cover;
+      background-position: center 60%;
+      z-index: 0;
+    }
+
+    .hero-img::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(10,5,0,0.3) 0%,
+        rgba(80,25,0,0.55) 40%,
+        rgba(10,5,0,0.85) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      padding: 2rem;
+      max-width: 780px;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      background: #e8410a;
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.9rem;
+      border-radius: 2px;
+      margin-bottom: 1.4rem;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 7rem;
+      color: #fff;
+      line-height: 0.95;
+      margin-bottom: 1.4rem;
+      letter-spacing: -0.01em;
+      text-shadow: 0 4px 40px rgba(0,0,0,0.6);
+    }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      color: rgba(255,220,190,0.85);
+      max-width: 480px;
+      margin: 0 auto 2.8rem;
+      font-weight: 300;
+      line-height: 1.8;
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1;
+      color: rgba(255,200,150,0.5);
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(6px); }
+    }
+
+    .hero-scroll::after {
+      content: '↓';
+      font-size: 1rem;
+      color: rgba(255,200,150,0.6);
+    }
+
+    a.btn {
+      display: inline-block;
+      background: #e8410a;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      padding: 1rem 2.8rem;
+      border-radius: 3px;
+      font-size: 0.88rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 24px rgba(232,65,10,0.45);
+      transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+    }
+    a.btn:hover {
+      background: #c73608;
+      box-shadow: 0 6px 32px rgba(232,65,10,0.6);
+      transform: translateY(-2px);
+    }
+
+    a.btn-outline {
+      display: inline-block;
+      color: #e8410a;
+      text-decoration: none;
+      font-weight: 700;
+      padding: 0.85rem 2.2rem;
+      border-radius: 3px;
+      border: 2px solid #e8410a;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: background 0.2s, color 0.2s;
+    }
+    a.btn-outline:hover {
+      background: #e8410a;
+      color: #fff;
+    }
+
+    .center { text-align: center; margin-bottom: 2rem; }
+
+    .page {
+      background: #1a0f0a;
+      padding: 3rem 2rem 6rem;
+    }
+
+    hr {
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, transparent, #5a2510, transparent);
+      margin: 4rem auto;
+      max-width: 960px;
+    }
+
+    .section-banner {
+      max-width: 960px;
+      margin: 0 auto 3rem;
+      padding: 2.5rem 0 1rem;
+      border-bottom: 1px solid #3a1a0a;
+    }
+
+    .section-banner h2 {
+      font-size: 2.4rem;
+      color: #fff;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      color: #ffffff;
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    h3 {
+      font-family: 'Playfair Display', serif;
+      color: #ffd9a8;
+      font-size: 1.15rem;
+      margin: 1.2rem 0 0.3rem;
+    }
+
+    p { font-size: 0.95rem; margin-bottom: 0.8rem; color: #f0d8b8; }
+
+    .globe-row {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .globe-sidebar {
+      max-width: 340px;
+      padding-top: 2rem;
+    }
+
+    .box {
+      background: #2a1508;
+      border: 1px solid #5a2a10;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .hotzone-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid #3a1a08;
+      font-size: 0.88rem;
+      color: #f0d8b8;
+    }
+    .hotzone-row:last-child { border-bottom: none; }
+    .hotzone-row span:last-child { font-weight: 700; color: #e8410a; }
+
+    .dot-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+      font-size: 0.9rem;
+      color: #f0d8b8;
+    }
+
+    .dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .prep { max-width: 900px; margin: 0 auto; }
+
+    .prep-title {
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      color: #fff;
+      font-size: 2.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .panel {
+      background: #241208;
+      border: 1px solid #4a2010;
+      border-radius: 10px;
+      padding: 1.8rem 2rem;
+      margin-bottom: 1.6rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .panel:hover {
+      border-color: #e8410a;
+      transform: translateY(-2px);
+    }
+
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: 0.8rem 0 0;
+    }
+
+    .checklist li {
+      display: flex;
+      gap: 0.7rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid #3a1a08;
+      font-size: 0.97rem;
+      color: #f0d8b8;
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .checklist li::before {
+      content: '✓';
+      color: #e8410a;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .warning-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .warning-card {
+      background: #1e0a04;
+      border: 1px solid #f97316;
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+    }
+    .warning-card h3 { color: #f97316; margin-top: 0; }
+    .warning-card p  { color: #f0d8b8; margin: 0; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+
+  <div id="top"></div>
+
+  <div class="hero">
+    <div class="hero-img"></div>
+    <div class="hero-content">
+      <span class="hero-tag">Climate Emergency</span>
+      <h1>BeatTheHeat</h1>
+      <p class="hero-desc">Tracking extreme heat across the planet — and everything you need to survive it.</p>
+      <a class="btn" href="#prep">How to Prepare ↓</a>
+    </div>
+    <div class="hero-scroll">Scroll</div>
+  </div>
+
+  <div class="page">
+
+  <div class="globe-row">
+    <div class="globe-sidebar">
+      <h2>Extreme Heat</h2>
+      <p>Extreme heat is one of the deadliest weather phenomena on Earth. It is defined differently depending on the region — what is considered dangerously hot in one country may be a normal summer day in another.</p>
+      <p>Heat waves occur when high pressure systems trap hot air over a region for several days or weeks. Urban areas suffer the most due to the "heat island effect," where concrete and asphalt absorb and retain heat far longer than natural land surfaces.</p>
+      <p>Climate change is making heat waves more frequent, longer, and more intense. Since the 1950s, heat waves have become more common across most of the world, and this trend is expected to continue throughout the 21st century.</p>
+
+      <h3>Who is most at risk?</h3>
+      <p>The elderly, young children, outdoor workers, athletes, and people without access to air conditioning are the most vulnerable. Heat exhaustion and heat stroke can develop within minutes during extreme conditions.</p>
+
+      <div class="box">
+        <h3 style="margin-top:0;">Current Extreme Heat Zones</h3>
+        <div class="hotzone-row"><span>🇮🇳 India (Rajasthan)</span><span>48°C / 118°F</span></div>
+        <div class="hotzone-row"><span>🇵🇰 Pakistan (Sindh)</span><span>47°C / 117°F</span></div>
+        <div class="hotzone-row"><span>🇸🇦 Saudi Arabia</span><span>46°C / 115°F</span></div>
+        <div class="hotzone-row"><span>🇮🇶 Iraq (Baghdad)</span><span>45°C / 113°F</span></div>
+        <div class="hotzone-row"><span>🇮🇷 Iran (Ahvaz)</span><span>44°C / 111°F</span></div>
+        <div class="hotzone-row"><span>🇦🇪 UAE (Dubai)</span><span>43°C / 109°F</span></div>
+        <div class="hotzone-row"><span>🇲🇦 Morocco</span><span>42°C / 108°F</span></div>
+        <div class="hotzone-row"><span>🇲🇽 Mexico (Sonora)</span><span>42°C / 108°F</span></div>
+        <div class="hotzone-row"><span>🇺🇸 USA (Phoenix)</span><span>41°C / 106°F</span></div>
+        <div class="hotzone-row"><span>🇨🇳 China (Xinjiang)</span><span>40°C / 104°F</span></div>
+      </div>
+
+      <div class="box">
+        <h3 style="margin-top:0;">Temperature Legend</h3>
+        <div class="dot-row"><div class="dot" style="background:#ff0000;"></div> Extreme — above 40°C / 104°F</div>
+        <div class="dot-row"><div class="dot" style="background:#f97316;"></div> Hot — 30°C to 40°C / 86–104°F</div>
+        <div class="dot-row"><div class="dot" style="background:#facc15;"></div> Warm — 20°C to 30°C / 68–86°F</div>
+        <div class="dot-row"><div class="dot" style="background:#4ade80;"></div> Mild — 10°C to 20°C / 50–68°F</div>
+        <div class="dot-row"><div class="dot" style="background:#60a5fa;"></div> Cold — below 10°C / 50°F</div>
+      </div>
+    </div>
+
+    <div id="globe" style="width:1000px; height:1000px;"></div>
+  </div>
+
+  <hr>
+
+  <div id="prep"></div>
+  <div class="prep">
+
+    <h2 class="prep-title">How to Prepare for a Heat Wave</h2>
+    <p style="text-align:center; color:#6b9e7e; margin-top:-1rem; margin-bottom:2rem;">Everything you need to stay safe before, during, and after extreme heat.</p>
+
+    <div class="panel" style="display:flex; align-items:flex-start; gap:1rem; border-left:4px solid #f97316;">
+      <span style="font-size:1.5rem; flex-shrink:0;">🌡️</span>
+      <p style="margin:0;"><strong>Heat is the #1 weather-related killer in the US.</strong> Most heat deaths are preventable with the right preparation. The tips below can keep you and your family safe before and during a heat wave.</p>
+    </div>
+
+    <h2 style="margin-bottom:1.2rem;">Before a Heat Wave Hits</h2>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:1.2rem; margin-bottom:2rem;">
+      <div class="panel" style="margin-bottom:0;"><div style="font-size:2rem;margin-bottom:0.6rem;">💧</div><h3 style="margin-top:0;">Stock Up on Water</h3><p style="margin:0;">Store at least one gallon of water per person per day. Don't wait until a warning is issued — stores sell out fast.</p></div>
+      <div class="panel" style="margin-bottom:0;"><div style="font-size:2rem;margin-bottom:0.6rem;">❄️</div><h3 style="margin-top:0;">Prepare Your Home</h3><p style="margin:0;">Install window reflectors (aluminum foil or panels) and weather-strip doors and windows to keep cool air in.</p></div>
+      <div class="panel" style="margin-bottom:0;"><div style="font-size:2rem;margin-bottom:0.6rem;">🏥</div><h3 style="margin-top:0;">Know Your Cooling Centers</h3><p style="margin:0;">Look up your local cooling shelters, libraries, and malls ahead of time. Save the address on your phone.</p></div>
+      <div class="panel" style="margin-bottom:0;"><div style="font-size:2rem;margin-bottom:0.6rem;">👵</div><h3 style="margin-top:0;">Check on Neighbors</h3><p style="margin:0;">Elderly people and young children are most at risk. Make a plan to check on them once a day during extreme heat.</p></div>
+      <div class="panel" style="margin-bottom:0;"><div style="font-size:2rem;margin-bottom:0.6rem;">🌀</div><h3 style="margin-top:0;">Service Your AC</h3><p style="margin:0;">Clean or replace air conditioner filters now. A clogged filter makes your AC work harder and cool less effectively.</p></div>
+      <div class="panel" style="margin-bottom:0;"><div style="font-size:2rem;margin-bottom:0.6rem;">📱</div><h3 style="margin-top:0;">Set Up Alerts</h3><p style="margin:0;">Enable weather alerts on your phone via the NOAA Weather app or your local emergency management system.</p></div>
+    </div>
+
+    <div class="panel">
+      <h2>During a Heat Wave</h2>
+      <ul class="checklist">
+        <li>Stay indoors between 10 AM and 4 PM when the sun is most intense.</li>
+        <li>Drink water every 15–20 minutes even if you don't feel thirsty — thirst is a late sign of dehydration.</li>
+        <li>Wear light-colored, loose-fitting clothing made from breathable fabrics like cotton or linen.</li>
+        <li>Never leave children, elderly people, or pets in a parked car — even for a few minutes.</li>
+        <li>Take cool (not cold) showers or baths to lower your body temperature.</li>
+        <li>Eat light meals. Heavy foods make your body work harder and generate more heat.</li>
+        <li>Close blinds and curtains on the sun-facing side of your home during the day.</li>
+        <li>Use fans to circulate air, but remember fans don't cool air — only your sweat evaporating does.</li>
+        <li>If you have no AC, go to a cooling center, library, or shopping mall during the hottest hours.</li>
+        <li>Check local air quality — heat often combines with pollution to make breathing harder, especially for those with asthma.</li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h2>Warning Signs: Heat-Related Illness</h2>
+      <p style="margin-top:0;">Know the difference — one requires immediate emergency action.</p>
+      <div class="warning-grid">
+        <div class="warning-card"><h3>Heat Cramps</h3><p>Muscle pain or spasms, usually in legs or abdomen. Stop activity, drink water or a sports drink, rest in a cool place.</p></div>
+        <div class="warning-card"><h3>Heat Exhaustion</h3><p>Heavy sweating, cold/clammy skin, fast/weak pulse, nausea, dizziness. Move to a cool place, apply cold wet cloths, sip water slowly.</p></div>
+        <div class="warning-card"><h3>⚠️ Heat Stroke</h3><p>Body temp above 103°F, hot/red skin, no sweating, rapid pulse, confusion. <strong>Call 911 immediately.</strong> Cool the person fast — ice bath, hose down with cold water.</p></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>How to Respond</h2>
+      <p style="margin-top:0;">If you or someone around you is showing signs of heat illness, act fast:</p>
+      <ul class="checklist">
+        <li><strong>Move them to a cool place</strong> — indoors with AC, shade, or near a fan immediately.</li>
+        <li><strong>Cool them down fast</strong> — apply cold wet cloths to the neck, armpits, and wrists.</li>
+        <li><strong>Give water</strong> — small sips slowly, not gulping. No alcohol or caffeine.</li>
+        <li><strong>Loosen tight clothing</strong> — remove extra layers to help the body release heat.</li>
+        <li><strong>Call 911 if confused or unconscious</strong> — do not wait to see if they improve.</li>
+        <li><strong>Stay with them</strong> — do not leave someone with heat stroke alone.</li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h2>Who Is Most at Risk?</h2>
+      <ul class="checklist">
+        <li><strong>Adults 65 and older</strong> — the body's ability to regulate temperature decreases with age.</li>
+        <li><strong>Infants and young children</strong> — they depend on caregivers to manage their environment.</li>
+        <li><strong>People with chronic illnesses</strong> — heart disease, diabetes, and respiratory conditions make heat more dangerous.</li>
+        <li><strong>Outdoor workers</strong> — construction, landscaping, and farm workers face the longest exposure.</li>
+        <li><strong>People without AC</strong> — a lack of air conditioning is the single biggest risk factor for heat death.</li>
+        <li><strong>People taking certain medications</strong> — diuretics, antihistamines, and antidepressants can impair heat response. Talk to your doctor.</li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h2>How to Respond to a Heat Wave</h2>
+      <ul class="checklist">
+        <li><strong>Move indoors immediately</strong> — go to an air-conditioned building. Even a mall or library works.</li>
+        <li><strong>Cool your body down</strong> — wet cloths on your neck, wrists, and armpits cool you fastest.</li>
+        <li><strong>Drink cold water</strong> — sip slowly every 15 minutes. Avoid alcohol, coffee, and sugary drinks.</li>
+        <li><strong>Call 911 for heat stroke</strong> — if someone stops sweating, gets confused, or loses consciousness, call immediately.</li>
+        <li><strong>Check on others</strong> — call elderly neighbors or family members. They may not realize they are in danger.</li>
+        <li><strong>Don't wait</strong> — heat illness gets worse fast. Act as soon as you notice symptoms.</li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h2>How to Recover After a Heat Wave</h2>
+      <p style="margin-top:0;">Even after the heat passes, your body may still need time to fully recover. Here is what to do in the hours and days that follow.</p>
+      <ul class="checklist">
+        <li><strong>Keep drinking water</strong> — your body loses a lot of fluids during extreme heat. Keep sipping water throughout the rest of the day and the next, even if you no longer feel thirsty.</li>
+        <li><strong>Rest as much as possible</strong> — heat exhaustion drains your energy significantly. Avoid strenuous activity for at least 24 to 48 hours after the heat wave ends to give your body time to recover.</li>
+        <li><strong>Eat light, hydrating foods</strong> — fruits like watermelon, oranges, and cucumber are high in water content and help restore fluids and electrolytes naturally. Avoid heavy or salty meals right away.</li>
+        <li><strong>Replace lost electrolytes</strong> — sweating heavily depletes sodium, potassium, and magnesium. Drink sports drinks, coconut water, or eat bananas and leafy greens to restore balance.</li>
+        <li><strong>Stay in a cool environment</strong> — even after temperatures drop outside, stay indoors in a cool space. Your body's core temperature may remain elevated for several hours after exposure.</li>
+        <li><strong>Take a cool shower</strong> — a lukewarm or slightly cool shower helps bring your body temperature down gradually. Avoid very cold showers immediately — the sudden change can shock your system.</li>
+        <li><strong>Monitor your symptoms</strong> — watch for signs like dizziness, nausea, headache, or confusion in the hours after. These can indicate your body has not fully recovered and may need medical attention.</li>
+        <li><strong>Check on vulnerable people around you</strong> — elderly family members, young children, and people with chronic illnesses may still be at risk even after the event. Check in with them regularly.</li>
+        <li><strong>See a doctor if symptoms persist</strong> — if you or someone else still feels unwell after 24 hours — persistent fatigue, rapid heartbeat, confusion, or muscle cramps — seek medical care. Heat illness can have lasting effects if untreated.</li>
+        <li><strong>Avoid going back outside too soon</strong> — even if the temperature drops slightly, humidity and residual heat can still be dangerous. Wait until conditions have clearly improved before resuming outdoor activities.</li>
+        <li><strong>Sleep in a cool room</strong> — body temperature regulation continues during sleep. Use fans, open windows at night when it is cooler, or stay somewhere with AC to ensure proper rest and recovery.</li>
+        <li><strong>Limit alcohol and caffeine for 48 hours</strong> — both dehydrate the body further. Stick to water, herbal teas, and hydrating drinks while your body is still recovering.</li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h2>Test Yourself: Heat Safety Quiz</h2>
+      <p style="margin-top:0;">Answer each question — click an option to see if you are right.</p>
+
+      <div id="quiz" style="display:flex; flex-direction:column; gap:1.5rem; margin-top:1rem;"></div>
+
+      <div style="margin-top:1.5rem; text-align:center;">
+        <button onclick="resetQuiz()" style="background:#e8410a; color:#fff; border:none; padding:0.6rem 1.6rem; border-radius:6px; font-family:'Lato',sans-serif; font-size:1rem; font-weight:700; cursor:pointer;">🔄 Reset Quiz</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Recovery Tracker: Check What You Have Done</h2>
+      <p style="margin-top:0;">Tick each step as you complete it. Your progress is shown below.</p>
+
+      <div id="tracker-list" style="margin-top:1rem;"></div>
+
+      <div style="margin-top:1.2rem; background:rgba(0,0,0,0.3); border-radius:8px; padding:0.8rem 1rem;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:0.4rem; font-size:0.9rem; color:#f0d8b8;">
+          <span>Progress</span>
+          <span id="tracker-count">0 / 8 done</span>
+        </div>
+        <div style="background:rgba(0,0,0,0.3); border-radius:99px; height:12px; overflow:hidden;">
+          <div id="tracker-bar" style="background:#e8410a; height:100%; width:0%; border-radius:99px; transition:width 0.4s;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Heat Risk Calculator</h2>
+      <p style="margin-top:0;">Enter your current conditions to see your personal heat risk level.</p>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem;">
+        <div>
+          <label style="font-size:0.9rem; font-weight:700; display:block; margin-bottom:0.3rem; color:#f0d8b8;">Temperature (°C)</label>
+          <input id="calc-temp" type="number" placeholder="e.g. 38" style="width:100%; padding:0.5rem 0.8rem; border-radius:6px; border:1px solid #5a2a10; background:#2a1508; color:#f0d8b8; font-family:'Lato',sans-serif; font-size:0.95rem;">
+        </div>
+        <div>
+          <label style="font-size:0.9rem; font-weight:700; display:block; margin-bottom:0.3rem; color:#f0d8b8;">Humidity (%)</label>
+          <input id="calc-humid" type="number" placeholder="e.g. 60" style="width:100%; padding:0.5rem 0.8rem; border-radius:6px; border:1px solid #5a2a10; background:#2a1508; color:#f0d8b8; font-family:'Lato',sans-serif; font-size:0.95rem;">
+        </div>
+        <div>
+          <label style="font-size:0.9rem; font-weight:700; display:block; margin-bottom:0.3rem; color:#f0d8b8;">Are you outdoors?</label>
+          <select id="calc-outdoor" style="width:100%; padding:0.5rem 0.8rem; border-radius:6px; border:1px solid #5a2a10; background:#2a1508; color:#f0d8b8; font-family:'Lato',sans-serif; font-size:0.95rem;">
+            <option value="no">No — indoors</option>
+            <option value="yes">Yes — outdoors</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.9rem; font-weight:700; display:block; margin-bottom:0.3rem; color:#f0d8b8;">Do you have AC?</label>
+          <select id="calc-ac" style="width:100%; padding:0.5rem 0.8rem; border-radius:6px; border:1px solid #5a2a10; background:#2a1508; color:#f0d8b8; font-family:'Lato',sans-serif; font-size:0.95rem;">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-top:1.2rem;">
+        <button onclick="calcRisk()" style="background:#e8410a; color:#fff; border:none; padding:0.6rem 1.6rem; border-radius:6px; font-family:'Lato',sans-serif; font-size:1rem; font-weight:700; cursor:pointer;">Calculate My Risk</button>
+      </div>
+
+      <div id="calc-result" style="margin-top:1.2rem; display:none; border-radius:8px; padding:1rem 1.2rem; font-size:0.97rem; color:#f0d8b8;"></div>
+    </div>
+
+    <div class="center">
+      <a class="btn-outline" href="#top"> Back to the top</a>
+    </div>
+
+    <script>
+      const questions = [
+        {
+          q: "What is the #1 sign that heat exhaustion is becoming heat stroke?",
+          options: ["Heavy sweating", "The person stops sweating completely", "Muscle cramps", "Feeling thirsty"],
+          answer: 1,
+          explanation: "When sweating stops, the body's cooling system has shut down. This is a medical emergency — call 911 immediately."
+        },
+        {
+          q: "How hot can a parked car get on a 90°F (32°C) day within 30 minutes?",
+          options: ["95°F (35°C)", "110°F (43°C)", "130°F (54°C)", "105°F (40°C)"],
+          answer: 2,
+          explanation: "A parked car can reach 130°F in under 30 minutes, even with windows cracked. Never leave children or pets inside."
+        },
+        {
+          q: "What should you drink if you have been sweating heavily for hours?",
+          options: ["Ice cold water only", "Sports drink or water with electrolytes", "Coffee for energy", "Juice or soda"],
+          answer: 1,
+          explanation: "Heavy sweating depletes sodium and potassium. Plain water helps but electrolyte drinks restore what your body lost."
+        },
+        {
+          q: "During a heat wave, when is the safest time to go outside?",
+          options: ["12 PM – 3 PM", "10 AM – 4 PM", "Early morning or evening", "Anytime if you wear sunscreen"],
+          answer: 2,
+          explanation: "The sun is most intense between 10 AM and 4 PM. Early morning and evening are the safest windows for outdoor activity."
+        },
+        {
+          q: "Which part of the body should you cool first in a heat emergency?",
+          options: ["Feet and legs", "Neck, armpits, and wrists", "Stomach", "Forehead only"],
+          answer: 1,
+          explanation: "The neck, armpits, and wrists have major blood vessels close to the skin. Cooling them brings down core body temperature fastest."
+        }
+      ];
+
+      function buildQuiz() {
+        const container = document.getElementById('quiz');
+        container.innerHTML = '';
+        questions.forEach((item, i) => {
+          const block = document.createElement('div');
+          block.style.cssText = 'background:rgba(0,0,0,0.2); border-radius:8px; padding:1rem 1.2rem;';
+          block.innerHTML = `
+            <p style="font-weight:700; margin:0 0 0.8rem; font-size:0.97rem; color:#f0d8b8;">${i + 1}. ${item.q}</p>
+            <div style="display:flex; flex-direction:column; gap:0.5rem;">
+              ${item.options.map((opt, j) => `
+                <button onclick="answerQ(${i}, ${j})" id="q${i}o${j}" style="
+                  text-align:left; background:rgba(255,255,255,0.06); border:1px solid #5a2a10;
+                  color:#f0d8b8; padding:0.5rem 0.9rem; border-radius:6px; cursor:pointer;
+                  font-family:'Lato',sans-serif; font-size:0.92rem; transition:background 0.2s;">
+                  ${opt}
+                </button>`).join('')}
+            </div>
+            <div id="q${i}-feedback" style="display:none; margin-top:0.7rem; font-size:0.88rem; padding:0.5rem 0.8rem; border-radius:6px; color:#f0d8b8;"></div>
+          `;
+          container.appendChild(block);
+        });
+      }
+
+      function answerQ(qi, oi) {
+        const item = questions[qi];
+        const feedback = document.getElementById(`q${qi}-feedback`);
+        for (let j = 0; j < item.options.length; j++) {
+          const btn = document.getElementById(`q${qi}o${j}`);
+          btn.disabled = true;
+          if (j === item.answer) btn.style.background = 'rgba(74,222,128,0.3)';
+          else if (j === oi && oi !== item.answer) btn.style.background = 'rgba(249,115,22,0.3)';
+        }
+        feedback.style.display = 'block';
+        feedback.style.background = oi === item.answer ? 'rgba(74,222,128,0.2)' : 'rgba(249,115,22,0.2)';
+        feedback.innerHTML = (oi === item.answer ? '✅ Correct! ' : '❌ Not quite. ') + item.explanation;
+      }
+
+      function resetQuiz() { buildQuiz(); }
+      buildQuiz();
+
+      const steps = [
+        "Moved to a cool, shaded or air-conditioned space",
+        "Drank at least 500ml of water or electrolyte drink",
+        "Applied cool wet cloths to neck, wrists, or armpits",
+        "Rested and avoided physical activity for at least 1 hour",
+        "Eaten a light, hydrating meal or fruit",
+        "Checked on a neighbor, family member, or friend",
+        "Monitored for symptoms like dizziness or nausea",
+        "Planned to stay indoors during peak heat tomorrow"
+      ];
+
+      function buildTracker() {
+        const list = document.getElementById('tracker-list');
+        list.innerHTML = '';
+        steps.forEach((step, i) => {
+          const row = document.createElement('div');
+          row.style.cssText = 'display:flex; align-items:center; gap:0.8rem; padding:0.5rem 0; border-bottom:1px solid rgba(90,42,16,0.5); font-size:0.95rem; color:#f0d8b8;';
+          row.innerHTML = `
+            <input type="checkbox" id="step${i}" onchange="updateTracker()" style="width:18px; height:18px; cursor:pointer; accent-color:#e8410a;">
+            <label for="step${i}" style="cursor:pointer; color:#f0d8b8;">${step}</label>
+          `;
+          list.appendChild(row);
+        });
+      }
+
+      function updateTracker() {
+        const checked = steps.filter((_, i) => document.getElementById(`step${i}`).checked).length;
+        const pct = Math.round((checked / steps.length) * 100);
+        document.getElementById('tracker-count').textContent = `${checked} / ${steps.length} done`;
+        document.getElementById('tracker-bar').style.width = pct + '%';
+      }
+
+      buildTracker();
+
+      function calcRisk() {
+        const temp = parseFloat(document.getElementById('calc-temp').value);
+        const humid = parseFloat(document.getElementById('calc-humid').value);
+        const outdoor = document.getElementById('calc-outdoor').value;
+        const ac = document.getElementById('calc-ac').value;
+        const result = document.getElementById('calc-result');
+
+        if (isNaN(temp) || isNaN(humid)) {
+          result.style.display = 'block';
+          result.style.background = 'rgba(0,0,0,0.15)';
+          result.innerHTML = '⚠️ Please enter both a temperature and humidity value.';
+          return;
+        }
+
+        let score = 0;
+        if (temp >= 40) score += 4;
+        else if (temp >= 35) score += 3;
+        else if (temp >= 30) score += 2;
+        else if (temp >= 25) score += 1;
+
+        if (humid >= 80) score += 3;
+        else if (humid >= 60) score += 2;
+        else if (humid >= 40) score += 1;
+
+        if (outdoor === 'yes') score += 2;
+        if (ac === 'no') score += 2;
+
+        let level, color, advice;
+        if (score <= 2) {
+          level = '🟢 Low Risk';
+          color = 'rgba(74,222,128,0.2)';
+          advice = 'Conditions are manageable. Stay hydrated and check on vulnerable people nearby.';
+        } else if (score <= 5) {
+          level = '🟡 Moderate Risk';
+          color = 'rgba(250,204,21,0.2)';
+          advice = 'Take precautions. Limit outdoor time, drink water regularly, and find shade or cool spaces.';
+        } else if (score <= 8) {
+          level = '🟠 High Risk';
+          color = 'rgba(249,115,22,0.2)';
+          advice = 'Dangerous conditions. Stay indoors with fans or AC, avoid all outdoor activity, and check on elderly neighbors.';
+        } else {
+          level = '🔴 Extreme Risk';
+          color = 'rgba(255,0,0,0.15)';
+          advice = 'Extreme danger. Do not go outside. Seek air-conditioned shelter immediately and call 911 if you feel unwell.';
+        }
+
+        result.style.display = 'block';
+        result.style.background = color;
+        result.innerHTML = `<strong style="font-size:1.1rem;">${level}</strong><br><br>${advice}`;
+      }
+    </script>
+
+  </div>
+
+  <script>
+    const API_URL = "https://api.globe.gov/search/v1/measurement/protocol/measureddate/?protocols=surface_temperatures&startdate=2024-01-01&enddate=2026-01-01&geojson=TRUE&sample=TRUE";
+
+    const extraPoints = [
+      { lat: 27.02, lng:  74.21, temp: 48, country: 'India',        site: 'Rajasthan', date: '2025' },
+      { lat: 25.89, lng:  68.52, temp: 47, country: 'Pakistan',     site: 'Sindh',     date: '2025' },
+      { lat: 23.88, lng:  45.07, temp: 46, country: 'Saudi Arabia', site: 'Riyadh',    date: '2025' },
+      { lat: 33.31, lng:  44.36, temp: 45, country: 'Iraq',         site: 'Baghdad',   date: '2025' },
+      { lat: 31.31, lng:  48.67, temp: 44, country: 'Iran',         site: 'Ahvaz',     date: '2025' },
+      { lat: 25.20, lng:  55.27, temp: 43, country: 'UAE',          site: 'Dubai',     date: '2025' },
+      { lat: 31.79, lng:  -7.09, temp: 42, country: 'Morocco',      site: 'Marrakech', date: '2025' },
+      { lat: 29.08, lng:-110.96, temp: 42, country: 'Mexico',       site: 'Sonora',    date: '2025' },
+      { lat: 33.44, lng:-112.07, temp: 41, country: 'USA',          site: 'Phoenix',   date: '2025' },
+      { lat: 42.80, lng:  86.15, temp: 40, country: 'China',        site: 'Xinjiang',  date: '2025' },
+    ];
+
+    function toF(c) { return ((c * 9/5) + 32).toFixed(1); }
+
+    function getColor(temp) {
+      if (temp >= 40) return '#ff0000';
+      if (temp >= 30) return '#f97316';
+      if (temp >= 20) return '#facc15';
+      if (temp >= 10) return '#4ade80';
+      return '#60a5fa';
+    }
+
+    fetch(API_URL)
+      .then(r => r.json())
+      .then(data => {
+        const apiPoints = data.features.map(f => ({
+          lat:     f.geometry.coordinates[1],
+          lng:     f.geometry.coordinates[0],
+          temp:    f.properties.surfacetemperaturesAverageSurfaceTemperatureC,
+          country: f.properties.countryName || 'Unknown',
+          site:    f.properties.siteName || '',
+          date:    (f.properties.surfacetemperaturesMeasuredAt || '').split('T')[0]
+        }));
+
+        Globe()
+          .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-day.jpg')
+          .backgroundColor('#1a0f0a')
+          .pointsData([...apiPoints, ...extraPoints])
+          .pointLat('lat')
+          .pointLng('lng')
+          .pointColor(p => getColor(p.temp))
+          .pointAltitude(0.05)
+          .pointRadius(0.8)
+          .pointLabel(p => `
+            <div style="background:#1a0505;color:#f5d0d0;padding:10px 14px;border-radius:8px;border:1px solid #f97316;font-family:Lato,sans-serif;font-size:13px;line-height:1.6;">
+              <b>${p.country}</b><br>${p.site}<br><b>${p.temp}°C / ${toF(p.temp)}°F</b><br>${p.date}
+            </div>`)
+          .onPointClick(p => alert(`${p.country}\n${p.site}\n${p.temp}°C / ${toF(p.temp)}°F\n${p.date}`))
+          (document.getElementById('globe'));
+      });
+  </script>
+  </div>
+
+</body>
+</html>
