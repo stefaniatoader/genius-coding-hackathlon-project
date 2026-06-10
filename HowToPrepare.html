@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BeatTheHeat</title>
+
+  <script src="https://unpkg.com/globe.gl"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background: #ec9494;
+      color: #821b1b;
+      font-family: 'Lato', sans-serif;
+      margin: 0;
+      padding: 2rem;
+      line-height: 1.7;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      color: #420d0d;
+      text-align: center;
+      font-size: 4rem;
+      margin: 2rem 0 1rem;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      color: #420d0d;
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    h3 {
+      font-family: 'Playfair Display', serif;
+      color: #420d0d;
+      font-size: 1.2rem;
+      margin: 1.2rem 0 0.3rem;
+    }
+
+    p {
+      font-size: 0.95rem;
+      margin-bottom: 0.8rem;
+    }
+
+    a.btn {
+      display: inline-block;
+      background: #420d0d;
+      color: #f5d0d0;
+      text-decoration: none;
+      font-weight: 700;
+      padding: 0.7rem 1.8rem;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+    a.btn:hover { background: #5c1111; }
+
+    a.btn-outline {
+      display: inline-block;
+      color: #420d0d;
+      text-decoration: none;
+      font-weight: 700;
+      padding: 0.6rem 1.6rem;
+      border-radius: 6px;
+      border: 2px solid #420d0d;
+      transition: background 0.2s;
+    }
+    a.btn-outline:hover { background: rgba(66,13,13,0.1); }
+
+    .center { text-align: center; margin-bottom: 2rem; }
+
+    hr {
+      border: none;
+      border-top: 2px solid rgba(66,13,13,0.25);
+      margin: 4rem auto;
+      max-width: 860px;
+    }
+
+    .globe-row {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .globe-sidebar {
+      max-width: 340px;
+      padding-top: 2rem;
+    }
+
+    .box {
+      background: rgba(0,0,0,0.15);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .hotzone-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid rgba(130,27,27,0.3);
+      font-size: 0.88rem;
+    }
+    .hotzone-row:last-child { border-bottom: none; }
+    .hotzone-row span:last-child { font-weight: bold; color: #4b0f0f; }
+
+    .dot-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+      font-size: 0.9rem;
+    }
+
+    .dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .prep {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .prep-title {
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      color: #420d0d;
+      font-size: 2.4rem;
+      margin-bottom: 2rem;
+    }
+
+    .panel {
+      background: rgba(0,0,0,0.15);
+      border: 1px solid rgba(66,13,13,0.3);
+      border-radius: 10px;
+      padding: 1.8rem 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: 0.8rem 0 0;
+    }
+
+    .checklist li {
+      display: flex;
+      gap: 0.7rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(130,27,27,0.3);
+      font-size: 0.97rem;
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .checklist li::before {
+      content: '✓';
+      color: #420d0d;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .warning-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .warning-card {
+      background: rgba(0,0,0,0.2);
+      border: 1px solid #f97316;
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+    }
+    .warning-card h3 { color: #f97316; margin-top: 0; }
+  </style>
+</head>
+<body>
+
+  <div id="top"></div>
+  <h1>BeatTheHeat</h1>
+
+  <div class="center">
+    <a class="btn" href="#prep">How to Prepare for a Heat Wave</a>
+  </div>
+
+  <div class="globe-row">
+    <div class="globe-sidebar">
+      <h2>Extreme Heat</h2>
+      <p>Extreme heat is one of the deadliest weather phenomena on Earth. It is defined differently depending on the region — what is considered dangerously hot in one country may be a normal summer day in another.</p>
+      <p>Heat waves occur when high pressure systems trap hot air over a region for several days or weeks. Urban areas suffer the most due to the "heat island effect," where concrete and asphalt absorb and retain heat far longer than natural land surfaces.</p>
+      <p>Climate change is making heat waves more frequent, longer, and more intense. Since the 1950s, heat waves have become more common across most of the world, and this trend is expected to continue throughout the 21st century.</p>
+
+      <h3>Who is most at risk?</h3>
+      <p>The elderly, young children, outdoor workers, athletes, and people without access to air conditioning are the most vulnerable. Heat exhaustion and heat stroke can develop within minutes during extreme conditions.</p>
+
+      <div class="box">
+        <h3 style="margin-top:0;">Current Extreme Heat Zones</h3>
+        <div class="hotzone-row"><span>🇮🇳 India (Rajasthan)</span><span>48°C / 118°F</span></div>
+        <div class="hotzone-row"><span>🇵🇰 Pakistan (Sindh)</span><span>47°C / 117°F</span></div>
+        <div class="hotzone-row"><span>🇸🇦 Saudi Arabia</span><span>46°C / 115°F</span></div>
+        <div class="hotzone-row"><span>🇮🇶 Iraq (Baghdad)</span><span>45°C / 113°F</span></div>
+        <div class="hotzone-row"><span>🇮🇷 Iran (Ahvaz)</span><span>44°C / 111°F</span></div>
+        <div class="hotzone-row"><span>🇦🇪 UAE (Dubai)</span><span>43°C / 109°F</span></div>
+        <div class="hotzone-row"><span>🇲🇦 Morocco</span><span>42°C / 108°F</span></div>
+        <div class="hotzone-row"><span>🇲🇽 Mexico (Sonora)</span><span>42°C / 108°F</span></div>
+        <div class="hotzone-row"><span>🇺🇸 USA (Phoenix)</span><span>41°C / 106°F</span></div>
+        <div class="hotzone-row"><span>🇨🇳 China (Xinjiang)</span><span>40°C / 104°F</span></div>
+      </div>
+
+      <div class="box">
+        <h3 style="margin-top:0;">Temperature Legend</h3>
+        <div class="dot-row"><div class="dot" style="background:#ff0000;"></div> Extreme — above 40°C / 104°F</div>
+        <div class="dot-row"><div class="dot" style="background:#f97316;"></div> Hot — 30°C to 40°C / 86–104°F</div>
+        <div class="dot-row"><div class="dot" style="background:#facc15;"></div> Warm — 20°C to 30°C / 68–86°F</div>
+        <div class="dot-row"><div class="dot" style="background:#4ade80;"></div> Mild — 10°C to 20°C / 50–68°F</div>
+        <div class="dot-row"><div class="dot" style="background:#60a5fa;"></div> Cold — below 10°C / 50°F</div>
+      </div>
+    </div>
+
+    <div id="globe" style="width:1000px; height:1000px;"></div>
+  </div>
+
+  <hr>
+
+  <div id="prep"></div>
+  <div class="prep">
+
+    <h2 class="prep-title">How to Prepare for a Heat Wave</h2>
+
+    <div class="panel">
+      <h2>Preparing for a heat wave is all about staying hydrated, and knowing how to spot heat-related risks.</h2>
+      <p>Here are some practical ways you can prepare:</p>
+    </div>
+
+    <div class="panel">
+      <ul class="checklist">
+        <li>Smart Hydration & Nutrition</li>
+        <li>Home Upgrades</li>
+        <li>Personal Comfort</li>
+        <li>Adjust Your Routine</li>
+        <li>Community and Vulnerable Care</li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h2>Before a Heat Wave Hits</h2>
+      <div class="warning-grid">
+        <div class="warning-card"><h3>Stock Up on Water</h3><p>Store at least one gallon of water per person per day. Don't wait until a warning is issued.</p></div>
+        <div class="warning-card"><h3>TEXT</h3><p>TEXT</p></div>
+        <div class="warning-card"><h3>TEXT</h3><p>TEXT</p></div>
+      </div>
+    </div>
+
+    <!-- text box 4: another checklist -->
+    <div class="panel">
+      <h2>TEXT</h2>
+      <ul class="checklist">
+        <li>TEXT</li>
+        <li>TEXT</li>
+        <li>TEXT</li>
+        <li>TEXT</li>
+      </ul>
+    </div>
+
+    <div class="center">
+      <a class="btn-outline" href="#top">Return to the main page</a>
+    </div>
+
+  </div>
+
+  <script>
+    const API_URL = "https://api.globe.gov/search/v1/measurement/protocol/measureddate/?protocols=surface_temperatures&startdate=2024-01-01&enddate=2026-01-01&geojson=TRUE&sample=TRUE";
+
+    const extraPoints = [
+      { lat: 27.02, lng:  74.21, temp: 48, country: 'India',        site: 'Rajasthan', date: '2025' },
+      { lat: 25.89, lng:  68.52, temp: 47, country: 'Pakistan',     site: 'Sindh',     date: '2025' },
+      { lat: 23.88, lng:  45.07, temp: 46, country: 'Saudi Arabia', site: 'Riyadh',    date: '2025' },
+      { lat: 33.31, lng:  44.36, temp: 45, country: 'Iraq',         site: 'Baghdad',   date: '2025' },
+      { lat: 31.31, lng:  48.67, temp: 44, country: 'Iran',         site: 'Ahvaz',     date: '2025' },
+      { lat: 25.20, lng:  55.27, temp: 43, country: 'UAE',          site: 'Dubai',     date: '2025' },
+      { lat: 31.79, lng:  -7.09, temp: 42, country: 'Morocco',      site: 'Marrakech', date: '2025' },
+      { lat: 29.08, lng:-110.96, temp: 42, country: 'Mexico',       site: 'Sonora',    date: '2025' },
+      { lat: 33.44, lng:-112.07, temp: 41, country: 'USA',          site: 'Phoenix',   date: '2025' },
+      { lat: 42.80, lng:  86.15, temp: 40, country: 'China',        site: 'Xinjiang',  date: '2025' },
+    ];
+
+    function toF(c) { return ((c * 9/5) + 32).toFixed(1); }
+
+    function getColor(temp) {
+      if (temp >= 40) return '#ff0000';
+      if (temp >= 30) return '#f97316';
+      if (temp >= 20) return '#facc15';
+      if (temp >= 10) return '#4ade80';
+      return '#60a5fa';
+    }
+
+    fetch(API_URL)
+      .then(r => r.json())
+      .then(data => {
+        const apiPoints = data.features.map(f => ({
+          lat:     f.geometry.coordinates[1],
+          lng:     f.geometry.coordinates[0],
+          temp:    f.properties.surfacetemperaturesAverageSurfaceTemperatureC,
+          country: f.properties.countryName || 'Unknown',
+          site:    f.properties.siteName || '',
+          date:    (f.properties.surfacetemperaturesMeasuredAt || '').split('T')[0]
+        }));
+
+        Globe()
+          .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-day.jpg')
+          .backgroundColor('#ec9494')
+          .pointsData([...apiPoints, ...extraPoints])
+          .pointLat('lat')
+          .pointLng('lng')
+          .pointColor(p => getColor(p.temp))
+          .pointAltitude(0.05)
+          .pointRadius(0.8)
+          .pointLabel(p => `
+            <div style="background:#1a0505;color:#f5d0d0;padding:10px 14px;border-radius:8px;border:1px solid #f97316;font-family:Lato,sans-serif;font-size:13px;line-height:1.6;">
+              <b>${p.country}</b><br>${p.site}<br><b>${p.temp}°C / ${toF(p.temp)}°F</b><br>${p.date}
+            </div>`)
+          .onPointClick(p => alert(`${p.country}\n${p.site}\n${p.temp}°C / ${toF(p.temp)}°F\n${p.date}`))
+          (document.getElementById('globe'));
+      });
+  </script>
+
+</body>
+</html>
